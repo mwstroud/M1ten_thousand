@@ -1,0 +1,73 @@
+{
+    "manifest": {
+      "$BASE_DIR": "${configdir}",
+      "$OUTPUT_DIR": "$BASE_DIR/output"
+    },
+    "target_simulator": "NEURON",
+    "run": {
+      "tstart": 0.0,
+      "tstop": 10000.0,
+      "dt": 0.05,
+      "dL": 20.0,
+      "spike_threshold": -15.0,
+      "nsteps_block": 5000
+    },
+    "conditions": {
+      "celsius": 31.0,
+      "v_init": -70.0
+    },
+    "inputs": {
+      "thalamus_base": {
+        "input_type": "spikes",
+        "module": "sonata",
+        "input_file": "$BASE_DIR/input/thalamus_base.h5",
+        "node_set": "thalamus"
+      },
+      "CP_shell": {
+          "input_type": "spikes",
+          "module": "sonata",
+          "input_file": "$BASE_DIR/input/CP_shell_short.h5",
+          "node_set": "thalamus"
+      },
+      "CS_shell": {
+          "input_type": "spikes",
+          "module": "sonata",
+          "input_file": "$BASE_DIR/input/CS_shell_short.h5",
+          "node_set": "thalamus"
+      },
+      "FSI_shell": {
+          "input_type": "spikes",
+          "module": "sonata",
+          "input_file": "$BASE_DIR/input/FSI_shell_short.h5",
+          "node_set": "thalamus"
+      },
+      "LTS_shell": {
+          "input_type": "spikes",
+          "module": "sonata",
+          "input_file": "$BASE_DIR/input/LTS_shell_short.h5",
+          "node_set": "thalamus"
+      },
+      "Intbase": {
+          "input_type": "spikes",
+          "module": "sonata",
+          "input_file": "$BASE_DIR/input/Intbase.h5",
+          "node_set": "Intbase"
+      }
+    },
+    "output": {
+      "log_file": "log.txt",
+      "output_dir": "$OUTPUT_DIR",
+      "spikes_file": "spikes_baseline.h5"
+    },
+    "reports": {
+      "ecp": {
+        "cells": "all",
+        "variable_name": "v",
+        "module": "extracellular",
+        "electrode_positions": "./components/recXelectrodes/linear_electrode.csv",
+        "file_name": "ecp_baseline.h5",
+        "electrode_channels": "all"
+        }
+    },
+    "node_sets_file": "$BASE_DIR/node_sets.json"
+  }

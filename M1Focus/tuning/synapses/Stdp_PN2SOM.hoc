@@ -1,0 +1,94 @@
+nrn_load_dll("../modfiles_withshortterm/nrnmech.dll")
+load_file("nrngui.hoc")
+{load_file("library_graphics.hoc")}
+//cvode_active(1)
+load_file("stdgui.hoc")
+load_file("../MC_CP_celltemplate.hoc")
+load_file("../LAcells_template_LFP_segconsider_all_Iinject_line_oritation.hoc")
+load_file("../interneuron_template_gj_LFP_Iinject_recordingimembrane.hoc") // Change the template file according to cell-type needed
+load_file("../SOM.hoc") // Change the template file according to cell-type needed
+
+objref CurrentClamp, stim[6], syn, nc[6], syn2, vcl
+
+objref cell
+
+cell = new SOM_Cell()
+cell.drv.amp=0
+
+///// current clamp ////
+objref  ccl, cclA
+delay_Pyr = 0		//(ms)
+duration_Pyr = 10e30//(ms)
+amplitude_Pyr = -160//400	//(pA)
+
+cell.soma ccl = new currentclamp(0.5)
+ccl.del = delay_Pyr		// (ms)
+ccl.dur = duration_Pyr		// (ms)
+ccl.amp = amplitude_Pyr*1e-3	// (nA)
+
+/* cell vcl = new VClamp(0.5)
+vcl.dur[0] = 0
+vcl.dur[1] = 5000
+vcl.dur[2] = 0
+
+vcl.amp[0] = -70
+vcl.amp[1] = -70
+vcl.amp[2] = -70 */
+
+stim[0] = new NetStim(0.9)
+stim[0].start = 600
+stim[0].interval = 30
+stim[0].number = 100
+stim[0].noise = 0
+
+objref syn1
+cell.dend[0] syn1 = new pyrD2interD_P2SOM_STFD(0.5)  //
+syn1.initW = 0.55 //0.035
+//syn1.Flimit=10
+nc[3] = new NetCon(stim[0],syn1,0,0,1)
+
+
+/* FARADAY=96520
+PI=3.14159
+secondorder=2
+celsius=30 */
+
+tstop = 1100  //9000  //5500
+dt = .05
+v_init = -70
+
+
+objref MainBox, SubBox1, SubBox2
+strdef tstr
+MainBox = new HBox()
+SubBox1 = new VBox()
+SubBox2 = new VBox()
+
+
+
+{
+SubBox1.intercept(1)
+	newGraph("cell.soma.v(.5)","Vsoma",-70,50)
+	newGraph("syn1.iampa*-1","I",0,1)
+	newGraph("syn1.F","",0,1)
+SubBox1.intercept(0)
+
+SubBox2.intercept(1)
+	nrncontrolmenu()
+    
+	xpanel(" ")
+	xbutton("QUIT","quit()")
+	xpanel(0)
+	nrnpointmenu(stim[0])
+    
+SubBox2.intercept(0)
+nrnpointmenu(syn1)
+nrnpointmenu(ccl)
+MainBox.intercept(1)
+	SubBox1.map()
+	SubBox2.map()
+	MainBox.intercept(0)
+
+MainBox.map("******** Synapse Check  ********",0,120,800,500)
+}
+run()

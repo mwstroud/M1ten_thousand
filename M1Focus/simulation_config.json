@@ -1,0 +1,47 @@
+{
+  "manifest": {
+    "$BASE_DIR": "${configdir}",
+    "$OUTPUT_DIR": "$BASE_DIR/output"
+  },
+  "target_simulator": "NEURON",
+  "run": {
+    "tstart": 0.0,
+    "tstop": 11500.0,
+    "dt": 0.05,
+    "dL": 20.0,
+    "spike_threshold": -15.0,
+    "nsteps_block": 5000
+  },
+  "conditions": {
+    "celsius": 31.0,
+    "v_init": -80.0
+  },
+  "inputs": {
+    "thalamus_spikes": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "$BASE_DIR/input/thalamus_long.h5",
+      "node_set": "thalamus"
+    },
+    "Intbase_spikes": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "$BASE_DIR/input/Intbase.h5",
+      "node_set": "Intbase"
+    }
+  },
+  "output": {
+    "log_file": "log.txt",
+    "output_dir": "$OUTPUT_DIR",
+    "spikes_file": "spikes.h5"
+  },
+  "reports": {
+    "v_report": {
+      "variable_name": "v",
+      "cells": "all",
+      "module": "membrane_report",
+      "sections": "soma"
+    }
+  },
+  "node_sets_file": "$BASE_DIR/node_sets.json"
+}

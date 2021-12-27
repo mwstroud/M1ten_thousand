@@ -1,0 +1,143 @@
+{
+  "network": "/home/mwsrgf/research/M1Cortex/circuit_config.json",
+  "simulation": "/home/mwsrgf/research/M1Cortex/simulation_config_short.json",
+  "config_path": "/home/mwsrgf/research/M1Cortex/config.json",
+  "config_dir": "/home/mwsrgf/research/M1Cortex",
+  "components": {
+    "biophysical_neuron_models_dir": "/home/mwsrgf/research/M1Cortex/components/biophysical_neuron_models",
+    "mechanisms_dir": "/home/mwsrgf/research/M1Cortex/components/mechanisms",
+    "morphologies_dir": "/home/mwsrgf/research/M1Cortex/components/morphologies",
+    "point_neuron_models_dir": "/home/mwsrgf/research/M1Cortex/components/point_neuron_models",
+    "synaptic_models_dir": "/home/mwsrgf/research/M1Cortex/components/synaptic_models",
+    "templates_dir": "/home/mwsrgf/research/M1Cortex/components/templates",
+    "__pycache___dir": "/home/mwsrgf/research/M1Cortex/components/__pycache__"
+  },
+  "networks": {
+    "nodes": [
+      {
+        "nodes_file": "/home/mwsrgf/research/M1Cortex/network/cortex_nodes.h5",
+        "node_types_file": "/home/mwsrgf/research/M1Cortex/network/cortex_node_types.csv"
+      },
+      {
+        "nodes_file": "/home/mwsrgf/research/M1Cortex/network/thalamus_nodes.h5",
+        "node_types_file": "/home/mwsrgf/research/M1Cortex/network/thalamus_node_types.csv"
+      },
+      {
+        "nodes_file": "/home/mwsrgf/research/M1Cortex/network/Intbase_nodes.h5",
+        "node_types_file": "/home/mwsrgf/research/M1Cortex/network/Intbase_node_types.csv"
+      },
+      {
+        "nodes_file": "/home/mwsrgf/research/M1Cortex/network/shell_nodes.h5",
+        "node_types_file": "/home/mwsrgf/research/M1Cortex/network/shell_node_types.csv"
+      }
+    ],
+    "edges": [
+      {
+        "edge_types_file": "/home/mwsrgf/research/M1Cortex/network/cortex_cortex_edge_types.csv",
+        "edges_file": "/home/mwsrgf/research/M1Cortex/network/cortex_cortex_edges.h5"
+      },
+      {
+        "edge_types_file": "/home/mwsrgf/research/M1Cortex/network/thalamus_cortex_edge_types.csv",
+        "edges_file": "/home/mwsrgf/research/M1Cortex/network/thalamus_cortex_edges.h5"
+      },
+      {
+        "edge_types_file": "/home/mwsrgf/research/M1Cortex/network/Intbase_cortex_edge_types.csv",
+        "edges_file": "/home/mwsrgf/research/M1Cortex/network/Intbase_cortex_edges.h5"
+      }
+    ],
+    "gap_juncs": []
+  },
+  "target_simulator": "NEURON",
+  "run": {
+    "tstart": 0.0,
+    "tstop": 10000.0,
+    "dt": 0.05,
+    "dL": 20.0,
+    "spike_threshold": -15.0,
+    "nsteps_block": 5000
+  },
+  "conditions": {
+    "celsius": 31.0,
+    "v_init": -70.0
+  },
+  "inputs": {
+    "thalamus_base": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "/home/mwsrgf/research/M1Cortex/input/thalamus_base.h5",
+      "node_set": "thalamus"
+    },
+    "thalamus_short": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "/home/mwsrgf/research/M1Cortex/input/thalamus_short.h5",
+      "node_set": "thalamus"
+    },
+    "CP_shell": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "/home/mwsrgf/research/M1Cortex/input/CP_shell_short.h5",
+      "node_set": "thalamus"
+    },
+    "CS_shell": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "/home/mwsrgf/research/M1Cortex/input/CS_shell_short.h5",
+      "node_set": "thalamus"
+    },
+    "FSI_shell": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "/home/mwsrgf/research/M1Cortex/input/FSI_shell_short.h5",
+      "node_set": "thalamus"
+    },
+    "LTS_shell": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "/home/mwsrgf/research/M1Cortex/input/LTS_shell_short.h5",
+      "node_set": "thalamus"
+    },
+    "Intbase": {
+      "input_type": "spikes",
+      "module": "sonata",
+      "input_file": "/home/mwsrgf/research/M1Cortex/input/Intbase.h5",
+      "node_set": "Intbase"
+    }
+  },
+  "output": {
+    "log_file": "/home/mwsrgf/research/M1Cortex/output/log.txt",
+    "output_dir": "/home/mwsrgf/research/M1Cortex/output",
+    "spikes_file": "/home/mwsrgf/research/M1Cortex/output/spikes_short.h5"
+  },
+  "reports": {
+    "ecp": {
+      "cells": "all",
+      "variable_name": "v",
+      "module": "extracellular",
+      "electrode_positions": "./components/recXelectrodes/linear_electrode.csv",
+      "file_name": "ecp_short.h5",
+      "electrode_channels": "all"
+    }
+  },
+  "node_sets_file": "/home/mwsrgf/research/M1Cortex/node_sets.json",
+  "node_sets": {
+    "biophysical_nodes": {
+      "model_type": "biophysical"
+    },
+    "point_nodes": {
+      "model_type": "point_process"
+    },
+    "vclamp_cells": [
+      0,
+      50,
+      100,
+      200,
+      300,
+      400,
+      500,
+      600,
+      700,
+      750
+    ]
+  }
+}

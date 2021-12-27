@@ -1,0 +1,4 @@
+edge_type_id target_query source_query distance_range syn_weight model_template dynamics_params target_sections
+100 pop_name=='PyrA' * "[0.0, 9999.9]" 1 bg2pyr BG2PNe_feng_min_initw.json ['basal']
+101 pop_name=='PyrC' * "[0.0, 9999.9]" 1 bg2pyr BG2PNe_feng_min_initw.json ['basal']
+102 pop_name=='Bask' * "[0.0, 9999.9]" 1 bg2pyr BG2PNi_feng_min_initw.json ['basal']

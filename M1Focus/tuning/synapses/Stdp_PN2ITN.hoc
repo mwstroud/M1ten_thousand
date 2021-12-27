@@ -1,0 +1,81 @@
+nrn_load_dll("../modfiles_withshortterm/nrnmech.dll")
+load_file("nrngui.hoc")
+{load_file("library_graphics.hoc")}
+//cvode_active(1)
+load_file("stdgui.hoc")
+load_file("../MC_CP_celltemplate.hoc")
+load_file("../LAcells_template_LFP_segconsider_all_Iinject_line_oritation.hoc")
+load_file("../interneuron_template_gj_LFP_Iinject_recordingimembrane.hoc") // Change the template file according to cell-type needed
+load_file("../SOM.hoc") // Change the template file according to cell-type needed
+
+objref CurrentClamp, stim[6], syn, nc[6], syn2, vcl
+
+objref cell
+
+cell = new InterneuronCell()
+
+/* cell vcl = new VClamp(0.5)
+vcl.dur[0] = 0
+vcl.dur[1] = 5000
+vcl.dur[2] = 0
+
+vcl.amp[0] = -70
+vcl.amp[1] = -70
+vcl.amp[2] = -70 */
+
+stim[0] = new NetStim(0.9)
+stim[0].start = 300
+stim[0].interval = 30
+stim[0].number = 100
+stim[0].noise = 0
+
+objref syn1
+cell.dend syn1 = new pyrD2interD_STFD(0.5)  //interD2pyrD_STFD
+syn1.initW = 0.8//0.035
+
+nc[3] = new NetCon(stim[0],syn1,0,0,1)
+
+
+FARADAY=96520
+PI=3.14159
+secondorder=2
+celsius=30
+
+tstop = 1100  //9000  //5500
+dt = .05
+v_init = -70
+
+
+objref MainBox, SubBox1, SubBox2
+strdef tstr
+MainBox = new HBox()
+SubBox1 = new VBox()
+SubBox2 = new VBox()
+
+
+
+{
+SubBox1.intercept(1)
+	newGraph("cell.dend.v(.5)","Vsoma",-70,50)
+	newGraph("syn1.iampa*-1","I",0,1)
+	newGraph("syn1.D1","",0,1)
+SubBox1.intercept(0)
+
+SubBox2.intercept(1)
+	nrncontrolmenu()
+    
+	xpanel(" ")
+	xbutton("QUIT","quit()")
+	xpanel(0)
+	nrnpointmenu(stim[0])
+    
+SubBox2.intercept(0)
+nrnpointmenu(syn1)
+MainBox.intercept(1)
+	SubBox1.map()
+	SubBox2.map()
+	MainBox.intercept(0)
+
+MainBox.map("******** Synapse Check  ********",0,120,800,500)
+}
+run()

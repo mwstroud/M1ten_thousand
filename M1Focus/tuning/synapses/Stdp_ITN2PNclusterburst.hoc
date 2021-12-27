@@ -1,0 +1,165 @@
+nrn_load_dll("../modfiles_withshortterm/nrnmech.dll")
+load_file("nrngui.hoc")
+{load_file("library_graphics.hoc")}
+//cvode_active(1)
+load_file("stdgui.hoc")
+load_file("../MC_CP_celltemplate.hoc")
+load_file("../LAcells_template_LFP_segconsider_all_Iinject_line_oritation.hoc")
+load_file("../interneuron_template_gj_LFP_Iinject_recordingimembrane.hoc") // Change the template file according to cell-type needed
+load_file("../SOM.hoc") // Change the template file according to cell-type needed
+
+objref CurrentClamp, stim[6], syn, nc[6], syn2, vcl
+
+objref cell
+
+cell = new MC_CP()//InterneuronCell//
+
+cell vcl = new VClamp(0.5)
+vcl.dur[0] = 0
+vcl.dur[1] = 5000
+vcl.dur[2] = 0
+
+vcl.amp[0] = -0
+vcl.amp[1] = -0
+vcl.amp[2] = -0
+
+
+load_file("function_NetStimOR.hoc")
+load_file("function_BurstGen.hoc")
+
+/*     freq=50
+    burst_low_freq=freq
+    burst_high_freq=freq
+    burstfreq_increase=0
+    burst_on_time=200
+    burst_off_time=500
+    burst_len=burst_on_time+burst_off_time
+    burst_num=int(tstop/burst_len)+1//(burst_high_freq-burst_low_freq)/burstfreq_increase+1  
+    stablized_time=0 */
+
+    
+objref Burst_gen,noise_random_phasicburst
+objref aff_event
+objref addsyn,addcon
+
+obfunc noisegen() { local i localobj rlocal
+rlocal = new Random()
+i=$1
+//j=$2
+rlocal.MCellRan4(1000*(i)+1)
+rlocal.negexp(1)
+return rlocal
+}
+
+ proc affdrive() { 
+   //for m = 0, CellNum_p/8-1{
+    //if(!pc.gid_exists(m)) { continue }				// Can't connect to target if it doesn't exist 
+	//cellid = pc.gid2cell(m) 											// on the node ("continue") skips rest of code
+	
+    noise_random_phasicburst=noisegen(1)//(aff_ID_rec.x[m]+TotalCellNum)
+    
+    Burst_gen = new PhasicburstSignalGen(burst_low_freq,burstfreq_increase,burst_on_time,burst_off_time,burst_len,burst_num,dt,noise_random_phasicburst,stablized_time)
+
+    cell.soma addsyn = new interD2pyrD_STFD(0.9)
+    
+    //rc_Poisson2E=new Random(1)                                       
+    
+    addsyn.initW = 10//rc_Poisson2E.lognormal(10,1)//(1.5,0.5),(2,1)
+    
+    del=0//rc_Poisson2E.uniform(0.5,1)
+	addcon= new NetCon(Burst_gen.burst.intfire1,addsyn,1,del,1)
+    
+/*     aff_event[m] = new Vector()
+    aff2LAcon[m].record(aff_event[m]) */
+    
+    //}
+
+ }
+ 
+//affdrive()
+
+objref Pseudo_E,Vtr_E_persyn
+Pseudo_E = new VecStim()
+Vtr_E_persyn=new Vector(6)
+Vtr_E_persyn.x[0]=100
+Vtr_E_persyn.x[1]=120
+Vtr_E_persyn.x[2]=140
+Vtr_E_persyn.x[3]=160
+Vtr_E_persyn.x[4]=180
+Vtr_E_persyn.x[5]=200
+
+/* Vtr_E_persyn.x[5]=100+1500
+Vtr_E_persyn.x[6]=120+1500
+Vtr_E_persyn.x[7]=140+1500
+Vtr_E_persyn.x[8]=160+1500
+Vtr_E_persyn.x[9]=180+1500
+
+Vtr_E_persyn.x[10]=100+1500*2
+Vtr_E_persyn.x[11]=120+1500*2
+Vtr_E_persyn.x[12]=140+1500*2
+Vtr_E_persyn.x[13]=160+1500*2
+Vtr_E_persyn.x[14]=180+1500*2 */
+
+Pseudo_E.play(Vtr_E_persyn)
+
+/* stim[0] = new NetStim(0.9)
+stim[0].start = 300
+stim[0].interval = 20
+stim[0].number = 10000
+stim[0].noise = 0
+*/
+objref syn1
+cell.soma syn1 = new interD2pyrD_STFD(0.5)  //
+syn1.initW = 10 //0.035 
+
+
+
+nc[3] = new NetCon(Pseudo_E,syn1,0,0,1)
+
+
+FARADAY=96520
+PI=3.14159
+secondorder=2
+celsius=30
+
+tstop = 5000 //9000  //5500
+dt = .05
+v_init = -70
+
+
+objref MainBox, SubBox1, SubBox2
+strdef tstr
+MainBox = new HBox()
+SubBox1 = new VBox()
+SubBox2 = new VBox()
+
+
+
+{
+SubBox1.intercept(1)
+	newGraph("cell.soma.v(.5)","Vsoma",-70,50)
+	newGraph("syn1.igaba*-1","I",0,1)
+	newGraph("syn1.facfactor","",0,1)
+    newGraph("syn1.F","",1,1)
+    newGraph("syn1.D1","",2,2)
+    newGraph("syn1.D2","",1,1)
+SubBox1.intercept(0)
+
+SubBox2.intercept(1)
+	nrncontrolmenu()
+    
+	xpanel(" ")
+	xbutton("QUIT","quit()")
+	xpanel(0)
+	//nrnpointmenu(stim[0])
+    
+SubBox2.intercept(0)
+//nrnpointmenu(syn1)
+MainBox.intercept(1)
+	SubBox1.map()
+	SubBox2.map()
+	MainBox.intercept(0)
+
+MainBox.map("******** Synapse Check  ********",0,120,800,500)
+}
+run()
