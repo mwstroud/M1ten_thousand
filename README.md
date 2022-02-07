@@ -12,6 +12,12 @@ There are 3 experiments to run:
 They are defined in the "simulation_config_... .json" files
 
 To switch which experiment is run, edit the "config.json file" to reference the correct simulation .json experiment.
+### Compile Mod Files (Describes ion channel dynamics)
+```
+cd components/mechanisms
+nrnivmodl modfiles
+cd ../..
+```
 
 ### Building Network
 
